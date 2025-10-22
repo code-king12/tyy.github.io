@@ -106,18 +106,179 @@
     background: linear-gradient(45deg, #ff1493, #ff69b4, #ffc0cb);
     border-radius: 50%;
     animation: orbit 8s linear infinite;
+    box-shadow: 0 0 10px currentColor;
+  }
+
+  /* 新增：爱心形状粒子 */
+  .heart-particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #ff1493;
+    transform: rotate(-45deg);
+    animation: heartFloat 6s ease-in-out infinite;
+  }
+
+  .heart-particle::before,
+  .heart-particle::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    position: absolute;
+    left: 4px;
+    top: 0;
+    background: #ff1493;
+    border-radius: 4px 4px 0 0;
+    transform: rotate(-45deg);
+    transform-origin: 0 4px;
+  }
+
+  .heart-particle::after {
+    left: 0;
+    transform: rotate(45deg);
+    transform-origin: 4px 4px;
+  }
+
+  /* 新增：螺旋粒子 */
+  .spiral-particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: radial-gradient(circle, #ff69b4, #ff1493);
+    border-radius: 50%;
+    animation: spiral 10s linear infinite;
+    box-shadow: 0 0 15px #ff69b4;
+  }
+
+  /* 新增：脉冲粒子 */
+  .pulse-particle {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: #ffc0cb;
+    border-radius: 50%;
+    animation: pulseMove 4s ease-in-out infinite;
+    box-shadow: 0 0 20px #ffc0cb;
+  }
+
+  /* 新增：闪烁星星粒子 */
+  .sparkle-particle {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-bottom: 6px solid #ffb6c1;
+    animation: sparkle 3s ease-in-out infinite;
+  }
+
+  .sparkle-particle::after {
+    content: '';
+    position: absolute;
+    left: -3px;
+    top: 2px;
+    width: 0;
+    height: 0;
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-top: 6px solid #ffb6c1;
   }
 
   @keyframes orbit {
     0% { 
       transform: rotate(0deg) translateX(400px) rotate(0deg);
       opacity: 0;
+      filter: hue-rotate(0deg);
     }
     10% { opacity: 1; }
+    50% { filter: hue-rotate(180deg); }
     90% { opacity: 1; }
     100% { 
       transform: rotate(360deg) translateX(400px) rotate(-360deg);
       opacity: 0;
+      filter: hue-rotate(360deg);
+    }
+  }
+
+  @keyframes heartFloat {
+    0%, 100% { 
+      transform: rotate(-45deg) translateY(0px) scale(1);
+      opacity: 0.8;
+    }
+    25% { 
+      transform: rotate(-45deg) translateY(-30px) scale(1.2);
+      opacity: 1;
+    }
+    50% { 
+      transform: rotate(-45deg) translateY(-60px) scale(0.8);
+      opacity: 0.6;
+    }
+    75% { 
+      transform: rotate(-45deg) translateY(-30px) scale(1.1);
+      opacity: 0.9;
+    }
+  }
+
+  @keyframes spiral {
+    0% { 
+      transform: rotate(0deg) translateX(300px) rotate(0deg) scale(0.5);
+      opacity: 0;
+    }
+    10% { opacity: 1; }
+    50% { 
+      transform: rotate(180deg) translateX(350px) rotate(-180deg) scale(1.2);
+      opacity: 1;
+    }
+    90% { opacity: 1; }
+    100% { 
+      transform: rotate(360deg) translateX(300px) rotate(-360deg) scale(0.5);
+      opacity: 0;
+    }
+  }
+
+  @keyframes pulseMove {
+    0%, 100% { 
+      transform: scale(1) translateY(0px);
+      opacity: 0.7;
+      box-shadow: 0 0 20px #ffc0cb;
+    }
+    25% { 
+      transform: scale(1.5) translateY(-20px);
+      opacity: 1;
+      box-shadow: 0 0 30px #ff69b4;
+    }
+    50% { 
+      transform: scale(2) translateY(-40px);
+      opacity: 0.8;
+      box-shadow: 0 0 40px #ff1493;
+    }
+    75% { 
+      transform: scale(1.2) translateY(-20px);
+      opacity: 0.9;
+      box-shadow: 0 0 25px #ffc0cb;
+    }
+  }
+
+  @keyframes sparkle {
+    0%, 100% { 
+      transform: rotate(0deg) scale(0);
+      opacity: 0;
+    }
+    20% { 
+      transform: rotate(90deg) scale(1);
+      opacity: 1;
+    }
+    40% { 
+      transform: rotate(180deg) scale(1.5);
+      opacity: 0.8;
+    }
+    60% { 
+      transform: rotate(270deg) scale(1.2);
+      opacity: 0.9;
+    }
+    80% { 
+      transform: rotate(360deg) scale(0.8);
+      opacity: 0.7;
     }
   }
 
@@ -230,14 +391,57 @@
     // 创建环绕粒子
     function createParticles() {
       const particlesContainer = document.getElementById('particles');
-      const numberOfParticles = 20;
+      const numberOfParticles = 15; // 减少普通粒子数量
       
+      // 创建普通环绕粒子
       for (let i = 0; i < numberOfParticles; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
         particle.style.animationDelay = (i * 0.4) + 's';
         particle.style.animationDuration = (8 + Math.random() * 4) + 's';
         particlesContainer.appendChild(particle);
+      }
+
+      // 创建爱心形状粒子
+      for (let i = 0; i < 8; i++) {
+        const heartParticle = document.createElement('div');
+        heartParticle.className = 'heart-particle';
+        heartParticle.style.left = Math.random() * 100 + '%';
+        heartParticle.style.top = Math.random() * 100 + '%';
+        heartParticle.style.animationDelay = (i * 0.8) + 's';
+        heartParticle.style.animationDuration = (6 + Math.random() * 3) + 's';
+        particlesContainer.appendChild(heartParticle);
+      }
+
+      // 创建螺旋粒子
+      for (let i = 0; i < 10; i++) {
+        const spiralParticle = document.createElement('div');
+        spiralParticle.className = 'spiral-particle';
+        spiralParticle.style.animationDelay = (i * 1.0) + 's';
+        spiralParticle.style.animationDuration = (10 + Math.random() * 5) + 's';
+        particlesContainer.appendChild(spiralParticle);
+      }
+
+      // 创建脉冲粒子
+      for (let i = 0; i < 12; i++) {
+        const pulseParticle = document.createElement('div');
+        pulseParticle.className = 'pulse-particle';
+        pulseParticle.style.left = (20 + Math.random() * 60) + '%';
+        pulseParticle.style.top = (20 + Math.random() * 60) + '%';
+        pulseParticle.style.animationDelay = (i * 0.3) + 's';
+        pulseParticle.style.animationDuration = (4 + Math.random() * 2) + 's';
+        particlesContainer.appendChild(pulseParticle);
+      }
+
+      // 创建闪烁星星粒子
+      for (let i = 0; i < 15; i++) {
+        const sparkleParticle = document.createElement('div');
+        sparkleParticle.className = 'sparkle-particle';
+        sparkleParticle.style.left = Math.random() * 100 + '%';
+        sparkleParticle.style.top = Math.random() * 100 + '%';
+        sparkleParticle.style.animationDelay = (i * 0.2) + 's';
+        sparkleParticle.style.animationDuration = (3 + Math.random() * 2) + 's';
+        particlesContainer.appendChild(sparkleParticle);
       }
     }
 
@@ -249,17 +453,65 @@
 
     // 鼠标移动效果
     document.addEventListener('mousemove', function(e) {
-      const particles = document.querySelectorAll('.particle');
+      const particles = document.querySelectorAll('.particle, .heart-particle, .spiral-particle');
       const mouseX = e.clientX / window.innerWidth;
       const mouseY = e.clientY / window.innerHeight;
       
       particles.forEach((particle, index) => {
-        const delay = index * 0.1;
+        const delay = index * 0.05;
         setTimeout(() => {
-          particle.style.transform += ` translate(${mouseX * 20}px, ${mouseY * 20}px)`;
-        }, delay * 100);
+          const intensity = particle.classList.contains('heart-particle') ? 30 : 
+                          particle.classList.contains('spiral-particle') ? 25 : 20;
+          particle.style.transform += ` translate(${mouseX * intensity}px, ${mouseY * intensity}px)`;
+        }, delay * 50);
       });
     });
+
+    // 添加点击爆炸效果
+    document.addEventListener('click', function(e) {
+      createExplosion(e.clientX, e.clientY);
+    });
+
+    function createExplosion(x, y) {
+      const container = document.body;
+      const numberOfExplosionParticles = 20;
+      
+      for (let i = 0; i < numberOfExplosionParticles; i++) {
+        const explosionParticle = document.createElement('div');
+        explosionParticle.style.position = 'fixed';
+        explosionParticle.style.left = x + 'px';
+        explosionParticle.style.top = y + 'px';
+        explosionParticle.style.width = '4px';
+        explosionParticle.style.height = '4px';
+        explosionParticle.style.background = `hsl(${Math.random() * 60 + 300}, 100%, 70%)`;
+        explosionParticle.style.borderRadius = '50%';
+        explosionParticle.style.pointerEvents = 'none';
+        explosionParticle.style.zIndex = '1000';
+        
+        const angle = (i / numberOfExplosionParticles) * Math.PI * 2;
+        const velocity = 100 + Math.random() * 100;
+        const vx = Math.cos(angle) * velocity;
+        const vy = Math.sin(angle) * velocity;
+        
+        explosionParticle.animate([
+          { 
+            transform: 'translate(0, 0) scale(1)', 
+            opacity: 1 
+          },
+          { 
+            transform: `translate(${vx}px, ${vy}px) scale(0)`, 
+            opacity: 0 
+          }
+        ], {
+          duration: 1000,
+          easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+        }).onfinish = () => {
+          explosionParticle.remove();
+        };
+        
+        container.appendChild(explosionParticle);
+      }
+    }
   </script>
 </body>
 </html>
