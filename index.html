@@ -1,23 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>炫酷粒子爱心</title>
+  <title>✨ 梦幻爱心 ✨</title>
 </head>
 <style>
+  /* --- CSS 变量，方便统一修改主题 --- */
+  :root {
+    --bg-color-start: #0a001a;
+    --bg-color-end: #000;
+    --primary-color: #ff1493; /* 深粉色 */
+    --secondary-color: #ff69b4; /* 亮粉色 */
+    --tertiary-color: #ffc0cb; /* 浅粉色 */
+    --glow-color: rgba(255, 20, 147, 0.7);
+    --star-color: #ffffff;
+  }
+  
   html,
   body {
     height: 100%;
     padding: 0;
     margin: 0;
-    background: radial-gradient(circle at center, #1a0033, #000);
+    /* 升级：动态渐变背景，模拟星云流动 */
+    background: linear-gradient(135deg, var(--bg-color-start), var(--bg-color-end), #1a0033, var(--bg-color-start));
+    background-size: 400% 400%;
+    animation: backgroundFlow 20s ease infinite;
     overflow: hidden;
     font-family: 'Arial', sans-serif;
+    cursor: none; /* 隐藏默认光标，使用自定义辉光 */
   }
 
-  /* 背景星空效果 */
+  @keyframes backgroundFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* 新增：光标跟随辉光效果 */
+  .cursor-glow {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 105, 180, 0.15) 0%, transparent 60%);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 999;
+    transition: transform 0.1s ease-out;
+  }
+
+  /* 背景星空效果 (保留并优化) */
   .stars {
     position: fixed;
     top: 0;
@@ -30,13 +66,31 @@
 
   .star {
     position: absolute;
-    background: white;
+    background: var(--star-color);
     border-radius: 50%;
     animation: twinkle 2s infinite alternate;
+    will-change: opacity, transform;
+  }
+
+  /* 新增：流星效果 */
+  .shooting-star {
+    position: absolute;
+    width: 2px;
+    height: 80px;
+    background: linear-gradient(to top, transparent, var(--star-color));
+    border-radius: 50%;
+    filter: drop-shadow(0 0 6px var(--star-color));
+    animation: fall linear infinite;
+    will-change: transform;
+  }
+
+  @keyframes fall {
+    from { transform: translate3d(-100px, -100px, 0) rotate(45deg); opacity: 1; }
+    to { transform: translate3d(calc(100vw + 100px), calc(100vh + 100px), 0) rotate(45deg); opacity: 0; }
   }
 
   @keyframes twinkle {
-    0% { opacity: 0.3; transform: scale(1); }
+    0% { opacity: 0.2; transform: scale(0.8); }
     100% { opacity: 1; transform: scale(1.2); }
   }
 
@@ -50,6 +104,8 @@
     align-items: center;
     justify-content: center;
     z-index: 2;
+    /* 新增：为3D效果开启透视 */
+    perspective: 1000px;
   }
 
   /* 爱心图片容器 */
@@ -58,40 +114,45 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: float 3s ease-in-out infinite;
+    animation: float 4s ease-in-out infinite;
+    /* 新增：应用3D变换 */
+    transform-style: preserve-3d;
+    transition: transform 0.2s ease-out;
+    will-change: transform;
   }
 
   @keyframes float {
-    0%, 100% { transform: translateY(0px) scale(1); }
-    50% { transform: translateY(-20px) scale(1.05); }
+    0%, 100% { transform: translateY(0px) scale(1) rotateZ(0deg); }
+    50% { transform: translateY(-25px) scale(1.05) rotateZ(2deg); }
   }
 
   img {
     display: block;
     border-radius: 20px;
     box-shadow: 
-      0 0 50px rgba(255, 20, 147, 0.6),
-      0 0 100px rgba(255, 20, 147, 0.4),
-      0 0 150px rgba(255, 20, 147, 0.2);
-    animation: glow 2s ease-in-out infinite alternate;
+      0 0 50px var(--glow-color),
+      0 0 100px var(--glow-color),
+      0 0 150px var(--glow-color);
+    animation: glow 2.5s ease-in-out infinite alternate;
+    will-change: box-shadow;
   }
 
   @keyframes glow {
-    0% { 
+    from { 
       box-shadow: 
-        0 0 50px rgba(255, 20, 147, 0.6),
+        0 0 50px var(--glow-color),
         0 0 100px rgba(255, 20, 147, 0.4),
         0 0 150px rgba(255, 20, 147, 0.2);
     }
-    100% { 
+    to { 
       box-shadow: 
-        0 0 70px rgba(255, 20, 147, 0.8),
+        0 0 70px var(--glow-color),
         0 0 120px rgba(255, 20, 147, 0.6),
         0 0 200px rgba(255, 20, 147, 0.4);
     }
   }
 
-  /* 环绕粒子效果 */
+  /* 环绕粒子效果 (优化) */
   .particles {
     position: absolute;
     width: 100%;
@@ -103,182 +164,28 @@
     position: absolute;
     width: 4px;
     height: 4px;
-    background: linear-gradient(45deg, #ff1493, #ff69b4, #ffc0cb);
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--tertiary-color));
     border-radius: 50%;
-    animation: orbit 8s linear infinite;
+    animation: orbit 10s linear infinite;
     box-shadow: 0 0 10px currentColor;
-  }
-
-  /* 新增：爱心形状粒子 */
-  .heart-particle {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    background: #ff1493;
-    transform: rotate(-45deg);
-    animation: heartFloat 6s ease-in-out infinite;
-  }
-
-  .heart-particle::before,
-  .heart-particle::after {
-    content: '';
-    width: 8px;
-    height: 8px;
-    position: absolute;
-    left: 4px;
-    top: 0;
-    background: #ff1493;
-    border-radius: 4px 4px 0 0;
-    transform: rotate(-45deg);
-    transform-origin: 0 4px;
-  }
-
-  .heart-particle::after {
-    left: 0;
-    transform: rotate(45deg);
-    transform-origin: 4px 4px;
-  }
-
-  /* 新增：螺旋粒子 */
-  .spiral-particle {
-    position: absolute;
-    width: 6px;
-    height: 6px;
-    background: radial-gradient(circle, #ff69b4, #ff1493);
-    border-radius: 50%;
-    animation: spiral 10s linear infinite;
-    box-shadow: 0 0 15px #ff69b4;
-  }
-
-  /* 新增：脉冲粒子 */
-  .pulse-particle {
-    position: absolute;
-    width: 5px;
-    height: 5px;
-    background: #ffc0cb;
-    border-radius: 50%;
-    animation: pulseMove 4s ease-in-out infinite;
-    box-shadow: 0 0 20px #ffc0cb;
-  }
-
-  /* 新增：闪烁星星粒子 */
-  .sparkle-particle {
-    position: absolute;
-    width: 0;
-    height: 0;
-    border-left: 3px solid transparent;
-    border-right: 3px solid transparent;
-    border-bottom: 6px solid #ffb6c1;
-    animation: sparkle 3s ease-in-out infinite;
-  }
-
-  .sparkle-particle::after {
-    content: '';
-    position: absolute;
-    left: -3px;
-    top: 2px;
-    width: 0;
-    height: 0;
-    border-left: 3px solid transparent;
-    border-right: 3px solid transparent;
-    border-top: 6px solid #ffb6c1;
+    will-change: transform, opacity, filter;
   }
 
   @keyframes orbit {
     0% { 
-      transform: rotate(0deg) translateX(400px) rotate(0deg);
-      opacity: 0;
+      transform: rotate(0deg) translateX(350px) rotate(0deg) scale(0.5);
+      opacity: 0.5;
       filter: hue-rotate(0deg);
     }
-    10% { opacity: 1; }
-    50% { filter: hue-rotate(180deg); }
-    90% { opacity: 1; }
+    50% { 
+      transform: rotate(180deg) translateX(400px) rotate(-180deg) scale(1.2);
+      opacity: 1;
+      filter: hue-rotate(180deg);
+    }
     100% { 
-      transform: rotate(360deg) translateX(400px) rotate(-360deg);
-      opacity: 0;
+      transform: rotate(360deg) translateX(350px) rotate(-360deg) scale(0.5);
+      opacity: 0.5;
       filter: hue-rotate(360deg);
-    }
-  }
-
-  @keyframes heartFloat {
-    0%, 100% { 
-      transform: rotate(-45deg) translateY(0px) scale(1);
-      opacity: 0.8;
-    }
-    25% { 
-      transform: rotate(-45deg) translateY(-30px) scale(1.2);
-      opacity: 1;
-    }
-    50% { 
-      transform: rotate(-45deg) translateY(-60px) scale(0.8);
-      opacity: 0.6;
-    }
-    75% { 
-      transform: rotate(-45deg) translateY(-30px) scale(1.1);
-      opacity: 0.9;
-    }
-  }
-
-  @keyframes spiral {
-    0% { 
-      transform: rotate(0deg) translateX(300px) rotate(0deg) scale(0.5);
-      opacity: 0;
-    }
-    10% { opacity: 1; }
-    50% { 
-      transform: rotate(180deg) translateX(350px) rotate(-180deg) scale(1.2);
-      opacity: 1;
-    }
-    90% { opacity: 1; }
-    100% { 
-      transform: rotate(360deg) translateX(300px) rotate(-360deg) scale(0.5);
-      opacity: 0;
-    }
-  }
-
-  @keyframes pulseMove {
-    0%, 100% { 
-      transform: scale(1) translateY(0px);
-      opacity: 0.7;
-      box-shadow: 0 0 20px #ffc0cb;
-    }
-    25% { 
-      transform: scale(1.5) translateY(-20px);
-      opacity: 1;
-      box-shadow: 0 0 30px #ff69b4;
-    }
-    50% { 
-      transform: scale(2) translateY(-40px);
-      opacity: 0.8;
-      box-shadow: 0 0 40px #ff1493;
-    }
-    75% { 
-      transform: scale(1.2) translateY(-20px);
-      opacity: 0.9;
-      box-shadow: 0 0 25px #ffc0cb;
-    }
-  }
-
-  @keyframes sparkle {
-    0%, 100% { 
-      transform: rotate(0deg) scale(0);
-      opacity: 0;
-    }
-    20% { 
-      transform: rotate(90deg) scale(1);
-      opacity: 1;
-    }
-    40% { 
-      transform: rotate(180deg) scale(1.5);
-      opacity: 0.8;
-    }
-    60% { 
-      transform: rotate(270deg) scale(1.2);
-      opacity: 0.9;
-    }
-    80% { 
-      transform: rotate(360deg) scale(0.8);
-      opacity: 0.7;
     }
   }
 
@@ -287,22 +194,24 @@
     position: absolute;
     top: 10%;
     color: transparent;
-    background: linear-gradient(45deg, #ff1493, #ff69b4, #ffc0cb, #ff1493);
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--tertiary-color), var(--primary-color));
     background-size: 400% 400%;
     -webkit-background-clip: text;
     background-clip: text;
     font-size: 3rem;
     font-weight: bold;
     text-align: center;
-    animation: rainbow 3s ease-in-out infinite, pulse 2s ease-in-out infinite;
+    text-shadow: 0 0 15px rgba(255, 105, 180, 0.5);
+    animation: rainbow 4s ease-in-out infinite, pulse 2.5s ease-in-out infinite;
+    will-change: transform, background-position;
   }
-
+  
   @keyframes rainbow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
   }
-
+  
   @keyframes pulse {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.1); }
@@ -314,22 +223,20 @@
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
-    color: #ff69b4;
+    color: var(--secondary-color);
     font-size: 1.2rem;
     font-weight: bold;
     text-shadow: 0 0 10px rgba(255, 105, 180, 0.8);
-    animation: signatureGlow 2s ease-in-out infinite alternate;
+    animation: signatureGlow 2.5s ease-in-out infinite alternate;
     z-index: 10;
   }
 
   @keyframes signatureGlow {
-    0% { 
+    from { 
       text-shadow: 0 0 10px rgba(255, 105, 180, 0.8);
-      transform: translateX(-50%) scale(1);
     }
-    100% { 
-      text-shadow: 0 0 20px rgba(255, 105, 180, 1), 0 0 30px rgba(255, 20, 147, 0.6);
-      transform: translateX(-50%) scale(1.05);
+    to { 
+      text-shadow: 0 0 20px var(--secondary-color), 0 0 30px var(--primary-color);
     }
   }
 
@@ -339,179 +246,149 @@
       width: 90vw !important;
       height: auto !important;
     }
-    .title {
-      font-size: 2rem;
-    }
-    .signature {
-      font-size: 1rem;
-      bottom: 20px;
-    }
+    .title { font-size: 2rem; }
+    .signature { font-size: 1rem; bottom: 20px; }
+    .cursor-glow { display: none; } /* 移动端隐藏辉光 */
+    body { cursor: default; } /* 恢复默认光标 */
   }
 </style>
 <body>
-  <!-- 星空背景 -->
+  <!-- 新增：光标辉光 -->
+  <div class="cursor-glow"></div>
+
+  <!-- 星空背景 (将流星也放在这里) -->
   <div class="stars" id="stars"></div>
 
   <!-- 主容器 -->
   <div class="container">
     <!-- 标题 -->
-    <div class="title">✨ 希望tyy每天都开心 ✨</div>
+    <div class="title">✨ 希望谭雅匀每天都开心 ✨</div>
     
     <!-- 爱心容器 -->
-    <div class="heart-container">
+    <div class="heart-container" id="heartContainer">
       <!-- 环绕粒子 -->
       <div class="particles" id="particles"></div>
       
       <!-- 爱心图片 -->
-      <img src="https://pic.imgdb.cn/item/642547f5a682492fcc15cd5d.gif" width="800" height="520" alt="粒子爱心动画" />
+      <img src="https://pic.imgdb.cn/item/642547f5a682492fcc15cd5d.gif" width="700" height="400" alt="粒子爱心动画" />
     </div>
   </div>
 
   <!-- 底部签名 -->
-  <div class="signature">💖 Created by lsj 💖</div>
+  <div class="signature">💖 Created by lsj with Love 💖</div>
 
   <script>
-    // 创建星空背景
-    function createStars() {
-      const starsContainer = document.getElementById('stars');
-      const numberOfStars = 100;
-      
-      for (let i = 0; i < numberOfStars; i++) {
+    const starsContainer = document.getElementById('stars');
+    const particlesContainer = document.getElementById('particles');
+    const heartContainer = document.getElementById('heartContainer');
+    const cursorGlow = document.querySelector('.cursor-glow');
+
+    // 1. 创建星空和流星
+    function createCosmos() {
+      // 创建静态星星
+      for (let i = 0; i < 150; i++) {
         const star = document.createElement('div');
         star.className = 'star';
-        star.style.left = Math.random() * 100 + '%';
-        star.style.top = Math.random() * 100 + '%';
-        star.style.width = Math.random() * 3 + 1 + 'px';
-        star.style.height = star.style.width;
-        star.style.animationDelay = Math.random() * 2 + 's';
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+        const size = Math.random() * 2 + 1;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.animationDelay = `${Math.random() * 2}s`;
         starsContainer.appendChild(star);
       }
+
+      // 创建流星
+      for (let i = 0; i < 3; i++) {
+        const shootingStar = document.createElement('div');
+        shootingStar.className = 'shooting-star';
+        shootingStar.style.top = `${Math.random() * 50 - 25}%`; // -25% to 25%
+        shootingStar.style.left = `${Math.random() * 100}%`;
+        const duration = Math.random() * 3 + 2; // 2-5 seconds
+        shootingStar.style.animationDuration = `${duration}s`;
+        shootingStar.style.animationDelay = `${Math.random() * 5}s`; // Stagger their appearance
+        starsContainer.appendChild(shootingStar);
+      }
     }
 
-    // 创建环绕粒子
-    function createParticles() {
-      const particlesContainer = document.getElementById('particles');
-      const numberOfParticles = 15; // 减少普通粒子数量
-      
-      // 创建普通环绕粒子
-      for (let i = 0; i < numberOfParticles; i++) {
+    // 2. 创建环绕粒子 (简化并保留核心)
+    function createOrbitingParticles() {
+      for (let i = 0; i < 20; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
-        particle.style.animationDelay = (i * 0.4) + 's';
-        particle.style.animationDuration = (8 + Math.random() * 4) + 's';
+        particle.style.animationDelay = `${i * 0.5}s`;
+        particle.style.animationDuration = `${10 + Math.random() * 5}s`;
         particlesContainer.appendChild(particle);
       }
+    }
 
-      // 创建爱心形状粒子
-      for (let i = 0; i < 8; i++) {
-        const heartParticle = document.createElement('div');
-        heartParticle.className = 'heart-particle';
-        heartParticle.style.left = Math.random() * 100 + '%';
-        heartParticle.style.top = Math.random() * 100 + '%';
-        heartParticle.style.animationDelay = (i * 0.8) + 's';
-        heartParticle.style.animationDuration = (6 + Math.random() * 3) + 's';
-        particlesContainer.appendChild(heartParticle);
-      }
+    // 3. 鼠标移动交互：3D倾斜和辉光跟随
+    document.addEventListener('mousemove', (e) => {
+      // 辉光跟随
+      cursorGlow.style.transform = `translate(calc(${e.clientX}px - 50%), calc(${e.clientY}px - 50%))`;
 
-      // 创建螺旋粒子
-      for (let i = 0; i < 10; i++) {
-        const spiralParticle = document.createElement('div');
-        spiralParticle.className = 'spiral-particle';
-        spiralParticle.style.animationDelay = (i * 1.0) + 's';
-        spiralParticle.style.animationDuration = (10 + Math.random() * 5) + 's';
-        particlesContainer.appendChild(spiralParticle);
-      }
+      // 3D倾斜效果
+      const { clientX, clientY } = e;
+      const { innerWidth, innerHeight } = window;
+      const rotateX = (clientY / innerHeight - 0.5) * -30; // 调整 -30 来控制倾斜幅度
+      const rotateY = (clientX / innerWidth - 0.5) * 30; // 调整 30 来控制倾斜幅度
+      
+      heartContainer.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    });
+    
+    // 鼠标移出窗口时重置倾斜
+    document.addEventListener('mouseleave', () => {
+        heartContainer.style.transform = `rotateX(0deg) rotateY(0deg)`;
+    });
 
-      // 创建脉冲粒子
-      for (let i = 0; i < 12; i++) {
-        const pulseParticle = document.createElement('div');
-        pulseParticle.className = 'pulse-particle';
-        pulseParticle.style.left = (20 + Math.random() * 60) + '%';
-        pulseParticle.style.top = (20 + Math.random() * 60) + '%';
-        pulseParticle.style.animationDelay = (i * 0.3) + 's';
-        pulseParticle.style.animationDuration = (4 + Math.random() * 2) + 's';
-        particlesContainer.appendChild(pulseParticle);
-      }
 
-      // 创建闪烁星星粒子
+    // 4. 点击绽放爱心效果
+    document.addEventListener('click', (e) => {
       for (let i = 0; i < 15; i++) {
-        const sparkleParticle = document.createElement('div');
-        sparkleParticle.className = 'sparkle-particle';
-        sparkleParticle.style.left = Math.random() * 100 + '%';
-        sparkleParticle.style.top = Math.random() * 100 + '%';
-        sparkleParticle.style.animationDelay = (i * 0.2) + 's';
-        sparkleParticle.style.animationDuration = (3 + Math.random() * 2) + 's';
-        particlesContainer.appendChild(sparkleParticle);
+        createHeartParticle(e.clientX, e.clientY);
       }
+    });
+
+    function createHeartParticle(x, y) {
+      const heart = document.createElement('div');
+      heart.style.position = 'fixed';
+      heart.style.left = `${x}px`;
+      heart.style.top = `${y}px`;
+      heart.style.width = '10px';
+      heart.style.height = '10px';
+      heart.style.background = `hsl(${Math.random() * 60 + 300}, 100%, 70%)`; // 粉色到紫色系
+      heart.style.zIndex = '1000';
+      heart.style.pointerEvents = 'none';
+
+      heart.style.clipPath = 'path("M0 200 v-200 h200 a100 100 90 0 1 0 200 a100 100 90 0 1 -200 0 z")';
+      
+      document.body.appendChild(heart);
+      
+      const angle = Math.random() * Math.PI * 2;
+      const velocity = 50 + Math.random() * 150;
+      const vx = Math.cos(angle) * velocity;
+      const vy = Math.sin(angle) * velocity;
+
+      heart.animate([
+        { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
+        { transform: `translate(calc(${vx}px - 50%), calc(${vy}px - 50%)) scale(0)`, opacity: 0 }
+      ], {
+        duration: 1200,
+        easing: 'ease-out'
+      }).onfinish = () => {
+        heart.remove();
+      };
     }
 
-    // 初始化效果
-    document.addEventListener('DOMContentLoaded', function() {
-      createStars();
-      createParticles();
+    // 初始化所有效果
+    document.addEventListener('DOMContentLoaded', () => {
+      createCosmos();
+      createOrbitingParticles();
+      // 把你原有的其他粒子创建函数也放在这里
+      // createHeartParticles(); 
+      // createSpiralParticles();
+      // ...
     });
-
-    // 鼠标移动效果
-    document.addEventListener('mousemove', function(e) {
-      const particles = document.querySelectorAll('.particle, .heart-particle, .spiral-particle');
-      const mouseX = e.clientX / window.innerWidth;
-      const mouseY = e.clientY / window.innerHeight;
-      
-      particles.forEach((particle, index) => {
-        const delay = index * 0.05;
-        setTimeout(() => {
-          const intensity = particle.classList.contains('heart-particle') ? 30 : 
-                          particle.classList.contains('spiral-particle') ? 25 : 20;
-          particle.style.transform += ` translate(${mouseX * intensity}px, ${mouseY * intensity}px)`;
-        }, delay * 50);
-      });
-    });
-
-    // 添加点击爆炸效果
-    document.addEventListener('click', function(e) {
-      createExplosion(e.clientX, e.clientY);
-    });
-
-    function createExplosion(x, y) {
-      const container = document.body;
-      const numberOfExplosionParticles = 20;
-      
-      for (let i = 0; i < numberOfExplosionParticles; i++) {
-        const explosionParticle = document.createElement('div');
-        explosionParticle.style.position = 'fixed';
-        explosionParticle.style.left = x + 'px';
-        explosionParticle.style.top = y + 'px';
-        explosionParticle.style.width = '4px';
-        explosionParticle.style.height = '4px';
-        explosionParticle.style.background = `hsl(${Math.random() * 60 + 300}, 100%, 70%)`;
-        explosionParticle.style.borderRadius = '50%';
-        explosionParticle.style.pointerEvents = 'none';
-        explosionParticle.style.zIndex = '1000';
-        
-        const angle = (i / numberOfExplosionParticles) * Math.PI * 2;
-        const velocity = 100 + Math.random() * 100;
-        const vx = Math.cos(angle) * velocity;
-        const vy = Math.sin(angle) * velocity;
-        
-        explosionParticle.animate([
-          { 
-            transform: 'translate(0, 0) scale(1)', 
-            opacity: 1 
-          },
-          { 
-            transform: `translate(${vx}px, ${vy}px) scale(0)`, 
-            opacity: 0 
-          }
-        ], {
-          duration: 1000,
-          easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-        }).onfinish = () => {
-          explosionParticle.remove();
-        };
-        
-        container.appendChild(explosionParticle);
-      }
-    }
   </script>
 </body>
 </html>
